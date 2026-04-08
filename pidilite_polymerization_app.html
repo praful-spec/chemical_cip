@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AriLinc — Polymerization Yield Optimization | Pidilite Industries</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:       #07100A;
+  --bg2:      #0B1810;
+  --bg3:      #0F2018;
+  --card:     #122018;
+  --cardHi:   #192C20;
+  --red:      #C8102E;
+  --redDim:   #7D0B1D;
+  --redBg:    rgba(200,16,46,0.1);
+  --green:    #0D9B5A;
+  --greenBr:  #14C97A;
+  --greenDim: #085C36;
+  --greenBg:  rgba(13,155,90,0.12);
+  --amber:    #D97706;
+  --amberBr:  #F59E0B;
+  --white:    #EFF7F2;
+  --muted:    #527A62;
+  --mutedHi:  #7DB896;
+  --text:     #C0DEC9;
+  --border:   rgba(20,201,122,0.12);
+  --borderHi: rgba(20,201,122,0.3);
+  --shadow:   0 4px 24px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--greenDim);border-radius:3px}
+
+/* ── NAV ──────────────────────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(7,16,10,0.94);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;
+  gap:28px;padding:0 28px;height:62px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-pill{background:var(--red);color:#fff;padding:4px 10px;border-radius:6px;
+  font-size:13px;font-weight:700;letter-spacing:0.5px}
+.logo-x{color:var(--muted);font-size:14px;margin:0 2px}
+.logo-arilinc{font-size:15px;font-weight:700;color:var(--greenBr);letter-spacing:1px}
+.logo-sub{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.nav-links{display:flex;gap:2px;margin-left:auto}
+.nav-link{text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;
+  padding:6px 13px;border-radius:6px;transition:all 0.2s;white-space:nowrap}
+.nav-link:hover{color:var(--white);background:rgba(255,255,255,0.05)}
+.nav-link.active{color:var(--greenBr);background:var(--greenBg)}
+.live-chip{display:flex;align-items:center;gap:6px;background:var(--greenBg);
+  border:1px solid var(--border);border-radius:100px;padding:4px 12px;
+  font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--greenBr)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--greenBr);
+  animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.nav-cta{background:var(--red);color:#fff;border:none;padding:8px 18px;
+  border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;transition:all .2s;white-space:nowrap}
+.nav-cta:hover{background:#E8122F;transform:translateY(-1px)}
+
+/* ── HERO ────────────────────────────────────────────────────── */
+.hero{position:relative;padding:90px 28px 60px;overflow:hidden;
+  background:linear-gradient(160deg,#07100A 0%,#0D2018 60%,#071510 100%)}
+.hero-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(20,201,122,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(20,201,122,.04) 1px,transparent 1px);
+  background-size:60px 60px}
+.hero-glow{position:absolute;top:10%;right:15%;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(13,155,90,.08) 0%,transparent 70%);pointer-events:none}
+.hero-redglow{position:absolute;bottom:0;left:5%;width:400px;height:300px;
+  background:radial-gradient(circle,rgba(200,16,46,.06) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;
+  background:var(--redBg);border:1px solid rgba(200,16,46,.3);
+  border-radius:100px;padding:5px 14px 5px 8px;
+  font-size:11px;font-family:'JetBrains Mono',monospace;color:#F28B99;margin-bottom:20px}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
+.hero h1{font-size:clamp(36px,5vw,58px);font-weight:700;line-height:.96;
+  color:var(--white);margin-bottom:18px}
+.hero h1 em{color:var(--greenBr);font-style:normal}
+.hero-desc{font-size:15px;font-weight:300;color:var(--mutedHi);line-height:1.7;
+  max-width:480px;margin-bottom:32px}
+.hero-stats{display:flex;gap:0;margin-bottom:30px;flex-wrap:wrap}
+.hstat{padding:0 22px}
+.hstat:first-child{padding-left:0}
+.hstat-val{font-size:34px;font-weight:700;color:var(--greenBr);line-height:1;
+  font-family:'JetBrains Mono',monospace}
+.hstat-lbl{font-size:11px;color:var(--muted);margin-top:3px}
+.hstat-div{width:1px;height:36px;background:var(--border);align-self:center}
+.hero-btns{display:flex;gap:12px}
+.btn-hero{background:var(--green);color:#fff;border:none;padding:13px 26px;
+  border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.btn-hero:hover{background:var(--greenBr);transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(13,155,90,.3)}
+.btn-hero-out{background:transparent;color:var(--greenBr);
+  border:1px solid var(--borderHi);padding:13px 26px;border-radius:8px;
+  font-size:14px;font-weight:500;cursor:pointer;font-family:'Space Grotesk',sans-serif;
+  transition:all .2s}
+.btn-hero-out:hover{background:var(--greenBg);transform:translateY(-2px)}
+
+/* Reactor schematic visual */
+.hero-visual{position:relative;display:flex;flex-direction:column;gap:12px;align-items:center}
+.reactor-mini-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%}
+.rmini{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px;text-align:center;transition:all .3s}
+.rmini.active{border-color:var(--amber);box-shadow:0 0 20px rgba(217,119,6,.15)}
+.rmini.warning{border-color:rgba(200,16,46,.4)}
+.rmini-icon{font-size:24px;margin-bottom:6px}
+.rmini-id{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
+.rmini-yield{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.rmini-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:8px}
+.rmini-fill{height:100%;border-radius:2px;transition:width 1s}
+
+/* ── SECTION COMMON ──────────────────────────────────────────── */
+.section{padding:72px 28px}
+.section.dark{background:var(--bg2)}
+.section-inner{max-width:1300px;margin:0 auto}
+.section-tag{display:inline-block;font-size:10px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:2px;text-transform:uppercase;color:var(--greenBr);
+  background:var(--greenBg);border:1px solid var(--border);
+  padding:4px 13px;border-radius:100px;margin-bottom:12px}
+.section-h{font-size:clamp(24px,3.5vw,38px);font-weight:700;color:var(--white);margin-bottom:10px}
+.section-sub{font-size:14px;color:var(--muted);max-width:560px;line-height:1.65;margin-bottom:36px}
+
+/* ── KPI STRIP ───────────────────────────────────────────────── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;position:relative;overflow:hidden;transition:all .2s}
+.kpi-card:hover{border-color:var(--borderHi);transform:translateY(-2px)}
+.kpi-top-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-val{font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  color:var(--white);line-height:1;margin-bottom:4px}
+.kpi-lbl{font-size:12px;color:var(--muted);font-weight:500}
+.kpi-delta{font-size:11px;font-family:'JetBrains Mono',monospace;margin-top:6px}
+.delta-up{color:var(--greenBr)} .delta-dn{color:var(--red)}
+
+/* ── REACTOR GRID ────────────────────────────────────────────── */
+.reactor-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.reactor-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:18px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.reactor-card:hover{border-color:var(--borderHi);transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(0,0,0,.45)}
+.reactor-card.running{border-color:var(--amber)}
+.reactor-card.alert{border-color:rgba(200,16,46,.6);
+  animation:alertPulse 2s ease-in-out infinite}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,0)}
+  50%{box-shadow:0 0 0 5px rgba(200,16,46,.15)}}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.rc-icon{width:38px;height:38px;border-radius:9px;background:var(--greenBg);
+  display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.rc-chip{font-size:9px;font-family:'JetBrains Mono',monospace;padding:3px 8px;
+  border-radius:100px;font-weight:600}
+.chip-running{background:rgba(217,119,6,.2);color:var(--amberBr)}
+.chip-idle{background:rgba(91,122,98,.2);color:var(--mutedHi)}
+.chip-complete{background:rgba(13,155,90,.2);color:var(--greenBr)}
+.chip-alert{background:rgba(200,16,46,.2);color:#F28B99}
+.chip-loading{background:rgba(99,102,241,.2);color:#A5B4FC}
+.rc-name{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px}
+.rc-product{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.yield-row{display:flex;justify-content:space-between;align-items:center;
+  margin:12px 0 6px;font-size:11px;color:var(--muted)}
+.yield-pct{font-family:'JetBrains Mono',monospace;font-weight:600}
+.yield-track{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.yield-fill{height:100%;border-radius:3px;transition:width 1.2s ease}
+.rc-meta{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.6}
+.rc-meta span{color:var(--mutedHi);font-weight:500}
+
+/* ── LIVE MONITOR ────────────────────────────────────────────── */
+.monitor-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:20px}
+.monitor-left{display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.panel-title{font-size:11px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--muted);margin-bottom:14px}
+.reactor-select-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--muted)}
+.reactor-select-row select{background:var(--card);border:1px solid var(--border);
+  color:var(--white);padding:7px 11px;border-radius:7px;font-size:13px;
+  font-family:'Space Grotesk',sans-serif;cursor:pointer;flex:1}
+
+/* Batch phases */
+.phase-list{display:flex;flex-direction:column;gap:7px}
+.phase-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:12px}
+.phase-item.done{background:rgba(13,155,90,.08);color:var(--greenBr)}
+.phase-item.active{background:rgba(217,119,6,.12);color:var(--amberBr);font-weight:600}
+.phase-item.pending{color:var(--muted)}
+.ph-icon{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex-shrink:0}
+.phase-item.done .ph-icon{background:var(--greenDim)}
+.phase-item.active .ph-icon{background:rgba(217,119,6,.25)}
+.phase-item.pending .ph-icon{background:rgba(255,255,255,.05)}
+.ph-time{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.prog-bar{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin:12px 0 8px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--greenDim),var(--greenBr));border-radius:2px;transition:width .8s}
+.elapsed-txt{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);text-align:right}
+
+/* Sensor grid */
+.sensor-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sensor-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.sb-lbl{font-size:10px;color:var(--muted);margin-bottom:5px}
+.sb-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  color:var(--white);line-height:1}
+.sb-unit{font-size:10px;color:var(--muted)}
+.sb-trend{font-size:10px;font-family:'JetBrains Mono',monospace;margin-top:4px}
+.trend-ok{color:var(--greenBr)} .trend-up{color:var(--amberBr)} .trend-dn{color:var(--red)}
+
+/* Monitor right */
+.monitor-right{display:flex;flex-direction:column;gap:14px}
+.chart-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.cp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cp-title{font-size:11px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--muted)}
+.cp-badge{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 8px;
+  border-radius:100px;background:var(--greenBg);color:var(--greenBr)}
+
+/* Yield prediction panel */
+.yield-pred-panel{background:var(--card);border:1px solid var(--borderHi);border-radius:14px;padding:20px;
+  position:relative;overflow:hidden}
+.yield-pred-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--red),var(--green))}
+.yp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.yp-label{font-size:11px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--muted);margin-bottom:4px}
+.yp-big{font-size:42px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  color:var(--greenBr);line-height:1}
+.yp-unit{font-size:14px;color:var(--muted)}
+.yp-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.yp-badge{padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;
+  font-family:'JetBrains Mono',monospace}
+.yp-ok{background:rgba(13,155,90,.15);color:var(--greenBr);border:1px solid rgba(13,155,90,.3)}
+.yp-warn{background:rgba(217,119,6,.15);color:var(--amberBr);border:1px solid rgba(217,119,6,.3)}
+.yp-confidence{font-size:11px;color:var(--muted)}
+.yp-bars{display:flex;flex-direction:column;gap:8px}
+.yp-bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.yp-bar-lbl{width:120px;color:var(--mutedHi);flex-shrink:0}
+.yp-bar-track{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.yp-bar-fill{height:100%;border-radius:3px;transition:width 1.5s ease}
+.yp-bar-val{width:40px;text-align:right;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--mutedHi);flex-shrink:0}
+
+/* AI Recommendation */
+.ai-rec-card{background:linear-gradient(135deg,var(--bg3),var(--card));
+  border:1px solid rgba(217,119,6,.3);border-radius:14px;padding:18px}
+.ai-rec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ai-icon{width:32px;height:32px;border-radius:8px;background:rgba(217,119,6,.15);
+  display:grid;place-items:center;font-size:16px;flex-shrink:0}
+.ai-title{font-size:13px;font-weight:600;color:var(--amberBr)}
+.ai-subtitle{font-size:11px;color:var(--muted)}
+.rec-items{display:flex;flex-direction:column;gap:8px}
+.rec-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;
+  background:rgba(255,255,255,.03);border-radius:8px;border:1px solid rgba(255,255,255,.05)}
+.ri-priority{font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 7px;
+  border-radius:100px;flex-shrink:0;margin-top:1px}
+.pri-high{background:rgba(200,16,46,.2);color:#F28B99}
+.pri-med{background:rgba(217,119,6,.2);color:var(--amberBr)}
+.pri-low{background:rgba(13,155,90,.15);color:var(--greenBr)}
+.ri-text{font-size:12px;color:var(--text);line-height:1.5;flex:1}
+.ri-action{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--greenBr);margin-top:3px}
+.btn-apply{background:var(--green);color:#fff;border:none;padding:5px 12px;
+  border-radius:6px;font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;
+  font-weight:600;transition:background .2s;flex-shrink:0;align-self:flex-start}
+.btn-apply:hover{background:var(--greenBr)}
+
+/* ── SOFT SENSORS ────────────────────────────────────────────── */
+.sensors-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sensor-card-big{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;transition:all .2s}
+.sensor-card-big:hover{border-color:var(--borderHi);transform:translateY(-2px)}
+.sc-header{padding:18px 20px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.sc-tag{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 9px;
+  border-radius:100px;margin-bottom:8px;display:inline-block}
+.sc-tag-visc{background:rgba(13,155,90,.15);color:var(--greenBr)}
+.sc-tag-solid{background:rgba(99,102,241,.15);color:#A5B4FC}
+.sc-tag-mw{background:rgba(217,119,6,.15);color:var(--amberBr)}
+.sc-name{font-size:16px;font-weight:600;color:var(--white);margin-bottom:2px}
+.sc-product{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.sc-gauge-wrap{padding:12px 20px}
+.sc-current{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+.sc-val-big{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1}
+.sc-unit-big{font-size:14px;color:var(--muted)}
+.sc-spec{font-size:11px;color:var(--muted);margin-bottom:10px}
+.spec-range{font-family:'JetBrains Mono',monospace}
+.sc-bar-wrap{position:relative;height:8px;background:rgba(255,255,255,.06);
+  border-radius:4px;overflow:visible;margin-bottom:4px}
+.sc-bar-fill{height:100%;border-radius:4px;transition:width 1.5s ease;position:relative}
+.sc-bar-spec-lo,.sc-bar-spec-hi{position:absolute;top:-4px;bottom:-4px;width:2px;background:rgba(255,255,255,.25)}
+.sc-bar-spec-lo{border-radius:1px}
+.sc-bar-spec-hi{border-radius:1px}
+.sc-bar-labels{display:flex;justify-content:space-between;font-size:9px;
+  font-family:'JetBrains Mono',monospace;color:var(--muted);margin-top:3px}
+.sc-status-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px 16px}
+.sc-status-chip{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 10px;
+  border-radius:100px;font-weight:600}
+.scs-ok{background:rgba(13,155,90,.15);color:var(--greenBr)}
+.scs-warn{background:rgba(217,119,6,.15);color:var(--amberBr)}
+.scs-bad{background:rgba(200,16,46,.15);color:#F28B99}
+.sc-acc{font-size:11px;color:var(--muted)}
+.sc-chart-area{padding:0 16px 16px}
+
+/* ── ROI DASHBOARD ────────────────────────────────────────────── */
+.roi-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:20px}
+.roi-chart-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.roi-table-wrap{overflow:hidden;border:1px solid var(--border);border-radius:12px}
+.roi-table{width:100%;border-collapse:collapse;font-size:13px}
+.roi-table th{background:var(--bg2);color:var(--muted);font-size:10px;
+  font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.4px;
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.roi-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+.roi-table tr:last-child td{border-bottom:none}
+.roi-table tr:hover td{background:rgba(255,255,255,.015)}
+.roi-val-cell{color:var(--greenBr);font-weight:600;font-family:'JetBrains Mono',monospace}
+.roi-summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.roi-sum-box{border-radius:12px;padding:22px;text-align:center}
+.rsb-green{background:rgba(13,155,90,.1);border:1px solid rgba(13,155,90,.2)}
+.rsb-red{background:rgba(200,16,46,.08);border:1px solid rgba(200,16,46,.2)}
+.rsb-amber{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2)}
+.rsb-val{font-size:32px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  color:var(--white);line-height:1;margin-bottom:6px}
+.rsb-green .rsb-val{color:var(--greenBr)}
+.rsb-red .rsb-val{color:#F28B99}
+.rsb-amber .rsb-val{color:var(--amberBr)}
+.rsb-lbl{font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px}
+.rsb-sub{font-size:11px;color:var(--muted)}
+
+/* ── BATCH LOG ────────────────────────────────────────────────── */
+.log-controls{display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.log-filter{background:var(--card);border:1px solid var(--border);color:var(--white);
+  padding:7px 11px;border-radius:7px;font-size:12px;font-family:'Space Grotesk',sans-serif;cursor:pointer}
+.btn-export{background:transparent;color:var(--greenBr);border:1px solid var(--borderHi);
+  padding:7px 16px;border-radius:7px;font-size:12px;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;transition:background .2s;margin-left:auto}
+.btn-export:hover{background:var(--greenBg)}
+.log-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+.log-table{width:100%;border-collapse:collapse;font-size:12px}
+.log-table th{background:var(--bg2);color:var(--muted);font-size:10px;
+  font-family:'JetBrains Mono',monospace;padding:9px 13px;text-align:left;
+  border-bottom:1px solid var(--border);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
+.log-table td{padding:9px 13px;border-bottom:1px solid var(--border);
+  color:var(--text);white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.log-table tr:last-child td{border-bottom:none}
+.log-table tr:hover td{background:rgba(255,255,255,.015)}
+.result-pill{display:inline-block;padding:2px 8px;border-radius:100px;font-size:9px;font-weight:700}
+.rp-pass{background:rgba(13,155,90,.2);color:var(--greenBr)}
+.rp-cond{background:rgba(217,119,6,.2);color:var(--amberBr)}
+.rp-fail{background:rgba(200,16,46,.2);color:#F28B99}
+.yield-hi{color:var(--greenBr);font-weight:600}
+.yield-lo{color:#F28B99;font-weight:600}
+
+/* ── DEPLOY STRIP ────────────────────────────────────────────── */
+.deploy-strip{background:var(--bg3);border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);padding:52px 28px}
+.deploy-steps{max-width:1100px;margin:0 auto 36px;display:flex;align-items:flex-start;
+  justify-content:center;flex-wrap:wrap;gap:0}
+.ds{text-align:center;width:180px;padding:0 8px}
+.ds-num{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  color:var(--greenBr);line-height:1;margin-bottom:6px}
+.ds-title{font-size:13px;font-weight:600;color:var(--white);margin-bottom:5px}
+.ds-body{font-size:11px;color:var(--muted);line-height:1.5}
+.ds-arr{font-size:18px;color:var(--greenDim);padding:0 4px;margin-top:10px;align-self:flex-start}
+.deploy-cta{text-align:center}
+.deploy-cta p{font-size:15px;color:var(--muted);margin-bottom:16px;font-style:italic}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 28px 20px}
+.footer-inner{max-width:1300px;margin:0 auto;display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:32px}
+.footer-brand{display:flex;flex-direction:column;gap:14px}
+.footer-col-title{font-size:10px;font-family:'JetBrains Mono',monospace;
+  text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+.footer-links{display:flex;flex-direction:column;gap:9px}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--greenBr)}
+.footer-bottom{max-width:1300px;margin:0 auto;border-top:1px solid var(--border);
+  padding-top:16px;font-size:12px;color:var(--muted);text-align:center}
+
+/* ── MODAL ───────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.8);
+  backdrop-filter:blur(6px);display:none;place-items:center;padding:20px}
+.modal-overlay.open{display:grid}
+.modal{background:var(--bg3);border:1px solid var(--border);border-radius:18px;
+  padding:36px;width:100%;max-width:480px;position:relative;
+  animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;
+  color:var(--muted);font-size:18px;cursor:pointer;transition:color .2s}
+.modal-close:hover{color:var(--white)}
+.modal-icon{font-size:32px;text-align:center;display:block;margin-bottom:12px}
+.modal h3{font-size:24px;font-weight:700;color:var(--white);text-align:center;
+  margin-bottom:8px}
+.modal p{font-size:13px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:24px}
+.mform{display:flex;flex-direction:column;gap:13px}
+.mform-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mfield{display:flex;flex-direction:column;gap:5px}
+.mfield label{font-size:11px;color:var(--mutedHi);font-weight:600}
+.mfield input,.mfield select{background:var(--card);border:1px solid var(--border);
+  color:var(--white);padding:9px 12px;border-radius:8px;font-size:13px;
+  font-family:'Space Grotesk',sans-serif;outline:none;transition:border-color .2s}
+.mfield input:focus,.mfield select:focus{border-color:var(--greenBr)}
+.mfield input::placeholder{color:var(--muted)}
+
+/* ── TOAST ───────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:600;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:12px 18px;font-size:13px;color:var(--greenBr);
+  box-shadow:var(--shadow);transform:translateY(120%);transition:transform .3s;
+  pointer-events:none;max-width:300px}
+.toast.show{transform:translateY(0)}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media(max-width:1100px){
+  .reactor-grid{grid-template-columns:repeat(3,1fr)}
+  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+  .sensors-grid{grid-template-columns:1fr 1fr}
+  .roi-grid{grid-template-columns:1fr}}
+@media(max-width:820px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .nav-links{display:none}
+  .monitor-grid{grid-template-columns:1fr}
+  .sensors-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){
+  .reactor-grid{grid-template-columns:1fr 1fr}
+  .kpi-strip{grid-template-columns:1fr}
+  .roi-summary-strip{grid-template-columns:1fr}
+  .mform-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <div class="logo-pill">PIDILITE</div>
+      <div class="logo-x">×</div>
+      <div>
+        <div class="logo-arilinc">AriLinc</div>
+        <div class="logo-sub">Polymerization Yield AI</div>
+      </div>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#dashboard" class="nav-link active" data-s="dashboard">Dashboard</a>
+      <a href="#monitor"   class="nav-link" data-s="monitor">Live Batch</a>
+      <a href="#sensors"   class="nav-link" data-s="sensors">Soft Sensors</a>
+      <a href="#roi"       class="nav-link" data-s="roi">ROI</a>
+      <a href="#batchlog"  class="nav-link" data-s="batchlog">Batch Log</a>
+    </div>
+    <div class="live-chip"><div class="live-dot"></div>LIVE SIMULATION</div>
+    <button class="nav-cta" onclick="openModal()">Request Pilot</button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════════════ -->
+<section class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-redglow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow"><div class="eyebrow-dot"></div>AI/ML · Batch Chemistry · Yield Intelligence</div>
+      <h1>Polymerization<br/>Yield <em>Optimized</em><br/>by AI</h1>
+      <p class="hero-desc">AriLinc predicts batch yield at 50% completion, corrects mid-reaction in real time, and continuously optimises monomer conversion, thermal profiles and recipe parameters for every Pidilite reactor.</p>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-val">2–5%</div><div class="hstat-lbl">Yield uplift / batch</div></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><div class="hstat-val">35–45%</div><div class="hstat-lbl">Off-spec reduction</div></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><div class="hstat-val">Rs 56–100Cr</div><div class="hstat-lbl">Annual value</div></div>
+      </div>
+      <div class="hero-btns">
+        <button class="btn-hero" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">Explore Live Demo ↓</button>
+        <button class="btn-hero-out" onclick="openModal()">Request 30-Day Pilot</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="reactor-mini-grid" id="heroMiniGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DASHBOARD ════════════════════════════════════════════════════════════ -->
+<section class="section" id="dashboard">
+  <div class="section-inner">
+    <div class="section-tag">Reactor Intelligence</div>
+    <h2 class="section-h">Polymerization Command Centre</h2>
+    <p class="section-sub">Real-time yield index and batch status across all reactors. AI intervention window shown for each active batch.</p>
+    <div class="kpi-strip" id="kpiStrip"></div>
+    <div class="reactor-grid" id="reactorGrid"></div>
+    <div id="alertBanner" style="display:none" class="ai-rec-card" style="margin-top:16px">
+      <div class="ai-rec-hdr">
+        <div class="ai-icon">⚠</div>
+        <div><div class="ai-title">Yield Alert</div><div class="ai-subtitle" id="alertText"></div></div>
+        <button class="btn-apply" style="margin-left:auto" onclick="dismissAlert()">Dismiss</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LIVE MONITOR ══════════════════════════════════════════════════════════ -->
+<section class="section dark" id="monitor">
+  <div class="section-inner">
+    <div class="section-tag">Live Batch Intelligence</div>
+    <h2 class="section-h">Active Batch Monitor</h2>
+    <p class="section-sub">Real-time sensor tracking, phase progress, yield prediction and AI-generated corrections — every action logged.</p>
+    <div class="monitor-grid">
+      <div class="monitor-left">
+        <div class="panel">
+          <div class="reactor-select-row">
+            <span>Monitoring:</span>
+            <select id="monitorSelect" onchange="switchMonitor()"></select>
+          </div>
+          <div class="panel-title">Batch Phase Progress</div>
+          <div class="phase-list" id="phaseList"></div>
+          <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+          <div class="elapsed-txt" id="elapsedTxt">Elapsed: 00:00:00</div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Live Sensor Readings</div>
+          <div class="sensor-grid-2" id="sensorGrid"></div>
+        </div>
+        <div class="ai-rec-card">
+          <div class="ai-rec-hdr">
+            <div class="ai-icon">🤖</div>
+            <div><div class="ai-title">AI Recommendation Engine</div><div class="ai-subtitle" id="aiSubtitle">Analysing batch R-201 · Phase 3</div></div>
+          </div>
+          <div class="rec-items" id="recItems"></div>
+        </div>
+      </div>
+      <div class="monitor-right">
+        <div class="yield-pred-panel">
+          <div class="yp-header">
+            <div>
+              <div class="yp-label">Predicted Final Yield</div>
+              <div><span class="yp-big" id="yieldBig">94.2</span><span class="yp-unit">%</span></div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">Model confidence: <span style="color:var(--greenBr);font-family:'JetBrains Mono',monospace" id="confText">94.7%</span></div>
+            </div>
+            <div class="yp-status">
+              <div class="yp-badge yp-ok" id="yieldBadge">ON TRACK</div>
+              <div class="yp-confidence">±1.5% accuracy</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace" id="batchCompletion">Batch 58% complete</div>
+            </div>
+          </div>
+          <div class="panel-title" style="margin-bottom:10px">Yield Factor Contributions</div>
+          <div class="yp-bars" id="yieldBars"></div>
+        </div>
+        <div class="chart-panel">
+          <div class="cp-header">
+            <div class="cp-title">Yield Prediction Trajectory (%)</div>
+            <div class="cp-badge" id="cpBadge">LIVE</div>
+          </div>
+          <canvas id="yieldChart" height="140"></canvas>
+        </div>
+        <div class="chart-panel">
+          <div class="cp-header">
+            <div class="cp-title">Reactor Temperature (°C)</div>
+            <div class="cp-badge">Actual vs Optimal</div>
+          </div>
+          <canvas id="tempChart" height="130"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SOFT SENSORS ══════════════════════════════════════════════════════════ -->
+<section class="section" id="sensors">
+  <div class="section-inner">
+    <div class="section-tag">Quality Intelligence</div>
+    <h2 class="section-h">Quality Soft Sensors</h2>
+    <p class="section-sub">Continuous prediction of viscosity, solid content and molecular weight — no waiting for end-of-batch lab tests.</p>
+    <div class="sensors-grid" id="sensorsGrid"></div>
+  </div>
+</section>
+
+<!-- ══ ROI DASHBOARD ════════════════════════════════════════════════════════ -->
+<section class="section dark" id="roi">
+  <div class="section-inner">
+    <div class="section-tag">Business Value</div>
+    <h2 class="section-h">ROI & Savings Dashboard</h2>
+    <p class="section-sub">Measured vs. pre-AriLinc baseline. Medium Pidilite polymerization plant · 50,000 MT/year.</p>
+    <div class="roi-grid">
+      <div class="roi-chart-panel">
+        <div class="cp-title" style="margin-bottom:14px">Monthly Yield Improvement — Baseline vs AriLinc (%)</div>
+        <canvas id="roiChart" height="220"></canvas>
+      </div>
+      <div>
+        <div class="roi-table-wrap">
+          <table class="roi-table" id="roiTable">
+            <thead><tr><th>Value Driver</th><th>Per Month</th><th>Per Year</th></tr></thead>
+            <tbody id="roiBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+      <div class="roi-chart-panel">
+        <div class="cp-title" style="margin-bottom:14px">Off-Spec Batch Rate — Before vs After (%)</div>
+        <canvas id="offspecChart" height="180"></canvas>
+      </div>
+      <div class="roi-chart-panel">
+        <div class="cp-title" style="margin-bottom:14px">Monthly Chemical Agent Saving (Rs Lakhs)</div>
+        <canvas id="savingChart" height="180"></canvas>
+      </div>
+    </div>
+    <div class="roi-summary-strip">
+      <div class="roi-sum-box rsb-green">
+        <div class="rsb-val">Rs 56–100Cr</div>
+        <div class="rsb-lbl">Total Annual Value</div>
+        <div class="rsb-sub">At full plant deployment</div>
+      </div>
+      <div class="roi-sum-box rsb-amber">
+        <div class="rsb-val">6–10 Months</div>
+        <div class="rsb-lbl">Investment Payback</div>
+        <div class="rsb-sub">Phase 1 cost: Rs 4–8 Crore</div>
+      </div>
+      <div class="roi-sum-box rsb-red">
+        <div class="rsb-val">Rs 8–28Cr</div>
+        <div class="rsb-lbl">Rework Cost Prevented</div>
+        <div class="rsb-sub">Off-spec & batch condemnation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BATCH LOG ═════════════════════════════════════════════════════════════ -->
+<section class="section" id="batchlog">
+  <div class="section-inner">
+    <div class="section-tag">Audit & Compliance</div>
+    <h2 class="section-h">Batch Audit Log</h2>
+    <p class="section-sub">Every batch automatically recorded — yield outcome, AI interventions, operator actions, QC results. One-click export.</p>
+    <div class="log-controls">
+      <select class="log-filter" id="logFilterReactor" onchange="filterLog()">
+        <option value="">All Reactors</option>
+      </select>
+      <select class="log-filter" id="logFilterResult" onchange="filterLog()">
+        <option value="">All Results</option>
+        <option value="PASS">PASS</option>
+        <option value="CONDITIONAL">CONDITIONAL</option>
+        <option value="FAIL">FAIL</option>
+      </select>
+      <button class="btn-export" onclick="exportLog()">⬇ Export Batch Log</button>
+    </div>
+    <div class="log-table-wrap">
+      <table class="log-table">
+        <thead><tr>
+          <th>Batch ID</th><th>Reactor</th><th>Product</th><th>Start</th>
+          <th>Duration</th><th>Yield %</th><th>AI Interventions</th>
+          <th>Operator</th><th>Result</th>
+        </tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DEPLOY ════════════════════════════════════════════════════════════════ -->
+<div class="deploy-strip">
+  <div class="deploy-steps">
+    <div class="ds"><div class="ds-num">01</div><div class="ds-title">Connect</div><div class="ds-body">Read-only to DCS historian & SAP. No process changes.</div></div>
+    <div class="ds-arr">→</div>
+    <div class="ds"><div class="ds-num">02</div><div class="ds-title">Baseline</div><div class="ds-body">2-week data sprint. Yield model baseline established.</div></div>
+    <div class="ds-arr">→</div>
+    <div class="ds"><div class="ds-num">03</div><div class="ds-title">Advisory</div><div class="ds-body">AI recommendations live. Operators validate suggestions.</div></div>
+    <div class="ds-arr">→</div>
+    <div class="ds"><div class="ds-num">04</div><div class="ds-title">Automate</div><div class="ds-body">Auto-corrections active. Full audit trail every batch.</div></div>
+    <div class="ds-arr">→</div>
+    <div class="ds"><div class="ds-num">05</div><div class="ds-title">ROI Review</div><div class="ds-body">90-day measured savings. You decide to scale.</div></div>
+  </div>
+  <div class="deploy-cta">
+    <p>We prove ROI before you sign a long-term contract.</p>
+    <button class="btn-hero" onclick="openModal()">Start Your 30-Day Pilot</button>
+  </div>
+</div>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="logo-pill">PIDILITE</div>
+        <div class="logo-x">×</div>
+        <div class="logo-arilinc" style="font-size:18px">AriLinc</div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6">
+        AI/ML-powered polymerization yield optimization.<br/>Predict. Correct. Optimise. Every batch.
+      </div>
+    </div>
+    <div><div class="footer-col-title">Platform</div>
+      <div class="footer-links">
+        <a href="#">Dashboard</a><a href="#">Live Batch</a>
+        <a href="#">Soft Sensors</a><a href="#">ROI Analytics</a>
+      </div>
+    </div>
+    <div><div class="footer-col-title">AriPrus</div>
+      <div class="footer-links">
+        <a href="#">ariprus.com</a><a href="#">chemical.ariprus.com</a>
+        <a href="#">cip.ariprus.com</a><a href="mailto:info@ariprus.com">info@ariprus.com</a>
+      </div>
+    </div>
+    <div><div class="footer-col-title">Compliance</div>
+      <div class="footer-links">
+        <a href="#">ISO 9001</a><a href="#">ISO 14001</a>
+        <a href="#">REACH</a><a href="#">OSHA PSM</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 AriPrus. Confidential — For Pidilite Industries Limited. Simulated data for demonstration purposes.</div>
+</footer>
+
+<!-- ══ MODAL ═════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="pilotModal" onclick="maybeClose(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span class="modal-icon">⚗</span>
+    <h3>Request Your 30-Day Pilot</h3>
+    <p>Connect 2–3 reactors, run yield prediction in advisory mode, measure uplift vs baseline at Day 30.</p>
+    <form class="mform" onsubmit="submitPilot(event)">
+      <div class="mform-row">
+        <div class="mfield"><label>Name</label><input type="text" placeholder="Your name" required/></div>
+        <div class="mfield"><label>Company</label><input type="text" placeholder="Plant / facility" required/></div>
+      </div>
+      <div class="mfield"><label>Email</label><input type="email" placeholder="you@pidilite.com" required/></div>
+      <div class="mfield"><label>Primary Reactor Product</label>
+        <select>
+          <option>Fevicol SH — PVAc emulsion</option>
+          <option>Dr. Fixit — Acrylic polymer</option>
+          <option>Pidifin — VAE copolymer</option>
+          <option>M-Seal — Epoxy component</option>
+          <option>Other / Multiple</option>
+        </select>
+      </div>
+      <div class="mfield"><label>DCS / Historian System</label>
+        <select>
+          <option>OSIsoft PI / AVEVA</option>
+          <option>AspenTech IP.21</option>
+          <option>Honeywell PHD</option>
+          <option>Siemens PCS7</option>
+          <option>Other / Not sure</option>
+        </select>
+      </div>
+      <button type="submit" style="background:var(--red);color:#fff;border:none;padding:12px;
+        border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+        font-family:'Space Grotesk',sans-serif;transition:background .2s"
+        onmouseover="this.style.background='#E8122F'" onmouseout="this.style.background='var(--red)'">
+        Submit Pilot Request →
+      </button>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- ══ SCRIPT ═════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const REACTORS = [
+  {id:'R-201',name:'Polymerization Reactor 1',icon:'⚗',product:'Fevicol SH (PVAc)',
+   yieldIdx:0.942,threshold:0.88,status:'running',batch:'BCH-20260408-201',
+   temp:'82°C',conversion:68,cipCount:24,compRate:99.1},
+  {id:'R-202',name:'Emulsion Reactor 2',icon:'🧪',product:'Dr. Fixit Waterproofing',
+   yieldIdx:0.906,threshold:0.88,status:'idle',batch:'—',
+   temp:'74°C',conversion:100,cipCount:18,compRate:100},
+  {id:'R-203',name:'VAE Copolymer Reactor',icon:'⚗',product:'Pidifin VAE Copolymer',
+   yieldIdx:0.831,threshold:0.88,status:'alert',batch:'BCH-20260408-203',
+   temp:'88°C',conversion:45,cipCount:30,compRate:97.8},
+  {id:'R-204',name:'Acrylic Dispersion Reactor',icon:'🔬',product:'Acrylic Adhesive Base',
+   yieldIdx:0.965,threshold:0.88,status:'complete',batch:'BCH-20260408-204',
+   temp:'70°C',conversion:100,cipCount:22,compRate:100},
+  {id:'R-205',name:'Specialty Polymer Reactor',icon:'⚗',product:'M-Seal Epoxy Component',
+   yieldIdx:0.72,threshold:0.88,status:'loading',batch:'BCH-20260408-205',
+   temp:'62°C',conversion:22,cipCount:14,compRate:100},
+];
+
+const BATCH_PHASES = [
+  {name:'Charge & Pre-heat',    icon:'🔥',dur:'25 min'},
+  {name:'Monomer Feed Start',   icon:'💧',dur:'35 min'},
+  {name:'Polymerization Reaction',icon:'⚗',dur:'90 min'},
+  {name:'Monomer Stripping',    icon:'💨',dur:'40 min'},
+  {name:'Cooling & Transfer',   icon:'❄',dur:'20 min'},
+];
+
+const ROI_ROWS = [
+  ['Batch Yield Uplift (2–5%)',    'Rs 1.5–2.3 L','Rs 18–28 Cr'],
+  ['Off-Spec Reduction (35–45%)', 'Rs 0.65–1.2 L','Rs 8–14 Cr'],
+  ['Monomer Conversion Gain',     'Rs 0.5–0.85 L','Rs 6–10 Cr'],
+  ['RM Waste Reduction (12–18%)', 'Rs 0.85–1.65 L','Rs 10–20 Cr'],
+  ['Energy / Utility Saving',     'Rs 0.5–1.0 L', 'Rs 6–12 Cr'],
+];
+
+const PRODUCTS  = ['Fevicol SH','Dr. Fixit WP','Pidifin VAE','Acrylic Base','M-Seal Epoxy'];
+const OPERATORS = ['R. Sharma','P. Mehta','A. Verma','S. Iyer','K. Nair'];
+const BATCHES   = REACTORS.map(r=>r.id);
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let monitorIdx   = 0; // R-201 (running)
+let currentPhase = 2; // Polymerization Reaction
+let phaseProgress= 68;
+let elapsedSec   = 7320; // 2h 2min
+let tick         = 0;
+let yieldHistory = [];
+let tempActual   = [];
+let tempOptimal  = [];
+let chartLabels  = [];
+let yieldChart, tempChart, roiChart, offspecChart, savingChart;
+let viscSensorChart, solidSensorChart, mwSensorChart;
+let batchLog     = [];
+let alertShown   = false;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  buildNavScroll();
+  renderHeroMini();
+  renderKPIs();
+  renderReactorGrid();
+  renderMonitorSelect();
+  renderPhases();
+  renderSensors();
+  renderAIRecs();
+  renderSoftSensors();
+  renderROI();
+  renderROITable();
+  generateBatchLog();
+  renderLog();
+  initCharts();
+  seedChartData();
+  startSim();
+});
+
+// ── Nav scroll highlight ──────────────────────────────────────────────────────
+function buildNavScroll(){
+  window.addEventListener('scroll',()=>{
+    const secs=['dashboard','monitor','sensors','roi','batchlog'];
+    let cur='';
+    secs.forEach(id=>{
+      const el=document.getElementById(id);
+      if(el&&el.getBoundingClientRect().top<=120) cur=id;
+    });
+    document.querySelectorAll('.nav-link').forEach(a=>{
+      a.classList.toggle('active',a.dataset.s===cur);
+    });
+  });
+}
+
+// ── Hero mini reactor grid ───────────────────────────────────────────────────
+function renderHeroMini(){
+  const g=document.getElementById('heroMiniGrid');
+  g.innerHTML=REACTORS.map(r=>{
+    const pct=Math.round(r.yieldIdx*100);
+    const col=r.yieldIdx>=r.threshold?'#14C97A':r.yieldIdx>=0.82?'#F59E0B':'#EF4444';
+    return `<div class="rmini${r.status==='running'?' active':r.status==='alert'?' warning':''}">
+      <div class="rmini-icon">${r.icon}</div>
+      <div class="rmini-id">${r.id}</div>
+      <div class="rmini-yield" style="color:${col}">${pct}%</div>
+      <div class="rmini-bar"><div class="rmini-fill" style="width:${pct}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+function renderKPIs(){
+  const running=REACTORS.filter(r=>r.status==='running').length;
+  const alert=REACTORS.filter(r=>r.status==='alert').length;
+  const avgYield=(REACTORS.reduce((a,r)=>a+r.yieldIdx,0)/REACTORS.length*100).toFixed(1);
+  const data=[
+    {val:running,lbl:'Active Runs',delta:'R-201 active',col:'#D97706',dt:''},
+    {val:alert,lbl:'Yield Alerts',delta:'R-203 below threshold',col:'#C8102E',dt:'dn'},
+    {val:avgYield+'%',lbl:'Fleet Avg Yield',delta:'↑ +1.8% vs baseline',col:'#14C97A',dt:'up'},
+    {val:'99.1%',lbl:'Batch Compliance',delta:'✓ All audits clean',col:'#14C97A',dt:'up'},
+  ];
+  document.getElementById('kpiStrip').innerHTML=data.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-top-bar" style="background:${k.col}"></div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-delta ${k.dt==='up'?'delta-up':k.dt==='dn'?'delta-dn':''}">${k.delta}</div>
+    </div>`).join('');
+}
+
+// ── Reactor Grid ──────────────────────────────────────────────────────────────
+function renderReactorGrid(){
+  const chipCls={running:'chip-running',idle:'chip-idle',complete:'chip-complete',alert:'chip-alert',loading:'chip-loading'};
+  const chipLbl={running:'RUNNING',idle:'IDLE',complete:'COMPLETE',alert:'YIELD ALERT',loading:'LOADING'};
+  document.getElementById('reactorGrid').innerHTML=REACTORS.map((r,i)=>{
+    const pct=Math.round(r.yieldIdx*100);
+    const col=r.yieldIdx>=r.threshold?'#14C97A':r.yieldIdx>=0.82?'#F59E0B':'#EF4444';
+    const cls=r.status==='running'?' running':r.status==='alert'?' alert':'';
+    return `<div class="reactor-card${cls}" onclick="focusReactor(${i})">
+      <div class="rc-top">
+        <div class="rc-icon">${r.icon}</div>
+        <div class="rc-chip ${chipCls[r.status]}">${chipLbl[r.status]}</div>
+      </div>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-product">${r.id} · ${r.product}</div>
+      <div class="yield-row">
+        <span>Yield Index</span>
+        <span class="yield-pct" style="color:${col}">${pct}%</span>
+      </div>
+      <div class="yield-track">
+        <div class="yield-fill" style="width:${pct}%;background:${col}"></div>
+      </div>
+      <div class="rc-meta">
+        Threshold: <span>${Math.round(r.threshold*100)}%</span> &nbsp;·&nbsp;
+        Conv: <span>${r.conversion}%</span><br/>
+        Temp: <span>${r.temp}</span> &nbsp;·&nbsp; Batch: <span>${r.batch}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Alert for R-203
+  const alerted=REACTORS.find(r=>r.status==='alert');
+  if(alerted&&!alertShown){
+    const b=document.getElementById('alertBanner');
+    b.style.display='block';
+    document.getElementById('alertText').textContent=
+      `${alerted.id} (${alerted.product}) — Yield Index ${Math.round(alerted.yieldIdx*100)}% is below threshold. AI recommends temperature adjustment +4°C and initiator top-up.`;
+    alertShown=true;
+  }
+}
+
+function focusReactor(i){
+  monitorIdx=i;
+  const sel=document.getElementById('monitorSelect');
+  if(sel) sel.value=i;
+  renderPhases(); renderSensors(); renderAIRecs();
+  document.getElementById('monitor').scrollIntoView({behavior:'smooth'});
+}
+function dismissAlert(){document.getElementById('alertBanner').style.display='none';}
+
+// ── Monitor Select ────────────────────────────────────────────────────────────
+function renderMonitorSelect(){
+  const sel=document.getElementById('monitorSelect');
+  REACTORS.forEach((r,i)=>{
+    const o=document.createElement('option');
+    o.value=i; o.textContent=`${r.id} — ${r.product}`;
+    if(i===monitorIdx) o.selected=true;
+    sel.appendChild(o);
+  });
+}
+function switchMonitor(){
+  monitorIdx=parseInt(document.getElementById('monitorSelect').value);
+  renderPhases(); renderSensors(); renderAIRecs();
+}
+
+// ── Phases ────────────────────────────────────────────────────────────────────
+function renderPhases(){
+  const r=REACTORS[monitorIdx];
+  const isRunning=r.status==='running'||r.status==='alert';
+  const cp=isRunning?currentPhase:-1;
+  document.getElementById('phaseList').innerHTML=BATCH_PHASES.map((p,i)=>{
+    const cls=!isRunning?'pending':i<cp?'done':i===cp?'active':'pending';
+    const ico=cls==='done'?'✓':cls==='active'?'▶':'○';
+    return `<div class="phase-item ${cls}">
+      <div class="ph-icon">${ico}</div>
+      <span>${p.icon} ${p.name}</span>
+      <span class="ph-time">${p.dur}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('progFill').style.width=(isRunning?phaseProgress:0)+'%';
+  document.getElementById('elapsedTxt').textContent=isRunning?`Elapsed: ${fmtTime(elapsedSec)}`:'No active batch';
+}
+
+// ── Sensor Grid ───────────────────────────────────────────────────────────────
+function renderSensors(){
+  const r=REACTORS[monitorIdx];
+  const active=r.status==='running'||r.status==='alert';
+  const sensors=active?[
+    {lbl:'Reactor Temp',val:'82',unit:'°C',trend:'trend-up',t:'↑ 2°C above nominal'},
+    {lbl:'Agitator Torque',val:'148',unit:'N·m',trend:'trend-ok',t:'→ Stable'},
+    {lbl:'Monomer Flow',val:'62',unit:'kg/h',trend:'trend-ok',t:'→ On schedule'},
+    {lbl:'Conversion',val:r.conversion.toString(),unit:'%',trend:'trend-ok',t:'↑ Progressing'},
+  ]:[
+    {lbl:'Reactor Temp',val:r.temp.replace('°C',''),unit:'°C',trend:'',t:'Standby'},
+    {lbl:'Agitator Torque',val:'—',unit:'N·m',trend:'',t:'No batch'},
+    {lbl:'Monomer Flow',val:'—',unit:'kg/h',trend:'',t:'No batch'},
+    {lbl:'Yield Index',val:Math.round(r.yieldIdx*100).toString(),unit:'%',
+      trend:r.yieldIdx>=r.threshold?'trend-ok':'trend-dn',
+      t:r.yieldIdx>=r.threshold?'Within spec':'Below threshold'},
+  ];
+  document.getElementById('sensorGrid').innerHTML=sensors.map(s=>`
+    <div class="sensor-box">
+      <div class="sb-lbl">${s.lbl}</div>
+      <div class="sb-val">${s.val}</div>
+      <div class="sb-unit">${s.unit}</div>
+      <div class="sb-trend ${s.trend}">${s.t}</div>
+    </div>`).join('');
+}
+
+// ── AI Recommendations ────────────────────────────────────────────────────────
+function renderAIRecs(){
+  const r=REACTORS[monitorIdx];
+  document.getElementById('aiSubtitle').textContent=`Analysing batch ${r.batch||r.id} · ${BATCH_PHASES[currentPhase]?.name||'Standby'}`;
+  const recs=r.status==='alert'?[
+    {priority:'HIGH',text:'Reactor temperature 88°C — 6°C above optimal for VAE copolymerization. Predicted Mw drift detected.',action:'Reduce jacket temp setpoint by 6°C immediately',level:'pri-high'},
+    {priority:'HIGH',text:'Yield index dropped to 83.1% at 45% conversion. Predicted final yield: 88.4% — below 88% threshold.',action:'Add initiator top-up: 0.12 kg AIBN at T+15min',level:'pri-high'},
+    {priority:'MED', text:'Monomer conversion rate slower than model prediction — possible inhibitor carry-over from RM batch.',action:'Extend polymerization phase by 18 minutes',level:'pri-med'},
+  ]:r.status==='running'?[
+    {priority:'OK', text:'R-201 performing within optimal window. Predicted yield 94.2% — above 88% threshold.',action:'No correction needed. Continue monitoring.',level:'pri-low'},
+    {priority:'MED',text:'Temperature trending +1.5°C above optimal. Pre-emptive cool-down recommended in 12 min.',action:'Reduce jacket temp by 2°C at T+12min',level:'pri-med'},
+    {priority:'OK', text:'Monomer conversion on schedule. Model confidence: 94.7%.',action:'Current trajectory maintained.',level:'pri-low'},
+  ]:[
+    {priority:'OK',text:'No active batch. AriLinc monitoring in standby mode.',action:'Ready for next batch.',level:'pri-low'},
+  ];
+  document.getElementById('recItems').innerHTML=recs.map(rec=>`
+    <div class="rec-item">
+      <div class="ri-priority ${rec.level}">${rec.priority}</div>
+      <div><div class="ri-text">${rec.text}</div><div class="ri-action">→ ${rec.action}</div></div>
+      ${rec.priority==='HIGH'?'<button class="btn-apply" onclick="applyRec(this)">Apply</button>':''}
+    </div>`).join('');
+}
+function applyRec(btn){btn.textContent='Applied ✓';btn.style.background='var(--greenDim)';btn.disabled=true;showToast('✓ Correction applied — logged to batch record');}
+
+// ── Yield prediction bars ─────────────────────────────────────────────────────
+function renderYieldBars(){
+  const factors=[
+    {lbl:'Temperature Profile',val:92,col:'#14C97A'},
+    {lbl:'Monomer Conversion',val:78,col:'#F59E0B'},
+    {lbl:'Initiator Efficiency',val:88,col:'#14C97A'},
+    {lbl:'RM Quality (CoA)',val:95,col:'#14C97A'},
+    {lbl:'Agitation Profile',val:85,col:'#14C97A'},
+  ];
+  document.getElementById('yieldBars').innerHTML=factors.map(f=>`
+    <div class="yp-bar-row">
+      <div class="yp-bar-lbl">${f.lbl}</div>
+      <div class="yp-bar-track"><div class="yp-bar-fill" style="width:${f.val}%;background:${f.col}"></div></div>
+      <div class="yp-bar-val">${f.val}%</div>
+    </div>`).join('');
+}
+
+// ── Soft Sensors ──────────────────────────────────────────────────────────────
+function renderSoftSensors(){
+  const sensorDefs=[
+    {tag:'sc-tag-visc',name:'Viscosity Soft Sensor',product:'Fevicol SH · R-201',
+     val:48200,unit:'cP',specLo:35000,specHi:65000,max:80000,
+     status:'Within Spec',cls:'scs-ok',acc:'±2,500 cP vs lab',col:'#14C97A',
+     chartId:'viscChart'},
+    {tag:'sc-tag-solid',name:'Solid Content Sensor',product:'All Emulsion Polymers',
+     val:54.2,unit:'%',specLo:52,specHi:58,max:65,
+     status:'Within Spec',cls:'scs-ok',acc:'±0.3% vs gravimetric',col:'#A5B4FC',
+     chartId:'solidChart'},
+    {tag:'sc-tag-mw',name:'Molecular Weight Predictor',product:'Adhesive Grade Polymers',
+     val:185000,unit:'g/mol',specLo:150000,specHi:250000,max:300000,
+     status:'Within Spec',cls:'scs-ok',acc:'±8,000 g/mol',col:'#F59E0B',
+     chartId:'mwChart'},
+  ];
+  document.getElementById('sensorsGrid').innerHTML=sensorDefs.map((sd,i)=>{
+    const fillPct=Math.round(sd.val/sd.max*100);
+    const loPos=Math.round(sd.specLo/sd.max*100);
+    const hiPos=Math.round(sd.specHi/sd.max*100);
+    const valDisp=sd.val>9999?sd.val.toLocaleString():sd.val;
+    return `<div class="sensor-card-big">
+      <div class="sc-header">
+        <div>
+          <div class="sc-tag ${sd.tag}">${sd.name.split(' ')[0].toUpperCase()} SENSOR</div>
+          <div class="sc-name">${sd.name}</div>
+          <div class="sc-product">${sd.product}</div>
+        </div>
+      </div>
+      <div class="sc-gauge-wrap">
+        <div class="sc-current">
+          <div class="sc-val-big" style="color:${sd.col}">${valDisp}</div>
+          <div class="sc-unit-big">${sd.unit}</div>
+        </div>
+        <div class="sc-spec">Spec: <span class="spec-range">${sd.specLo.toLocaleString()}–${sd.specHi.toLocaleString()} ${sd.unit}</span></div>
+        <div class="sc-bar-wrap">
+          <div class="sc-bar-fill" style="width:${fillPct}%;background:${sd.col}"></div>
+          <div class="sc-bar-spec-lo" style="left:${loPos}%"></div>
+          <div class="sc-bar-spec-hi" style="left:${hiPos}%"></div>
+        </div>
+        <div class="sc-bar-labels"><span>0</span><span>${sd.max.toLocaleString()}</span></div>
+      </div>
+      <div class="sc-chart-area"><canvas id="${sd.chartId}" height="80"></canvas></div>
+      <div class="sc-status-row">
+        <div class="sc-status-chip ${sd.cls}">${sd.status}</div>
+        <div class="sc-acc">Accuracy: ${sd.acc}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Init soft sensor charts
+  setTimeout(()=>initSensorCharts(sensorDefs),100);
+}
+
+function initSensorCharts(defs){
+  const labels=Array.from({length:20},(_,i)=>-19+i+'m');
+  defs.forEach(sd=>{
+    const el=document.getElementById(sd.chartId);
+    if(!el) return;
+    const base=sd.val;
+    const data=Array.from({length:20},(_,i)=>+(base+(Math.random()-.5)*base*.04+(i-10)*base*.001).toFixed(sd.val>100?0:1));
+    new Chart(el,{
+      type:'line',
+      data:{labels,datasets:[{data,borderColor:sd.col,backgroundColor:'transparent',
+        borderWidth:1.5,pointRadius:0,tension:.4}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{enabled:false}},
+        scales:{x:{display:false},y:{display:false}}},
+    });
+  });
+}
+
+// ── ROI ───────────────────────────────────────────────────────────────────────
+function renderROI(){
+  const months=['Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+  const baseline=[88.2,88.0,87.8,88.1,87.9,88.0,88.1];
+  const withAI  =[88.2,90.1,91.4,92.2,93.0,93.6,94.2];
+  roiChart=new Chart(document.getElementById('roiChart'),{
+    type:'line',
+    data:{labels:months,datasets:[
+      {label:'Baseline',data:baseline,borderColor:'rgba(91,122,98,.5)',
+        backgroundColor:'rgba(91,122,98,.06)',borderDash:[4,4],tension:.3,pointRadius:3,
+        pointBackgroundColor:'rgba(91,122,98,.5)'},
+      {label:'With AriLinc',data:withAI,borderColor:'#14C97A',
+        backgroundColor:'rgba(20,201,122,.08)',fill:true,tension:.3,pointRadius:3,
+        pointBackgroundColor:'#14C97A'},
+    ]},
+    options:{...chartOpts(),plugins:{legend:{display:true,
+      labels:{color:'#7DB896',font:{size:11}}}}},
+  });
+
+  const off=[12.4,11.8,10.2,8.8,7.4,6.6,5.8];
+  offspecChart=new Chart(document.getElementById('offspecChart'),{
+    type:'bar',
+    data:{labels:months,datasets:[{data:off,
+      backgroundColor:months.map((_,i)=>i===0?'rgba(91,122,98,.4)':'rgba(200,16,46,.5)'),
+      borderRadius:4}]},
+    options:chartOpts(),
+  });
+
+  const savings=[0,4.2,6.8,9.4,11.2,13.0,14.8];
+  savingChart=new Chart(document.getElementById('savingChart'),{
+    type:'bar',
+    data:{labels:months,datasets:[{data:savings,
+      backgroundColor:'rgba(13,155,90,.65)',borderRadius:4}]},
+    options:chartOpts(),
+  });
+}
+
+function renderROITable(){
+  document.getElementById('roiBody').innerHTML=ROI_ROWS.map(r=>`
+    <tr>
+      <td>${r[0]}</td>
+      <td class="roi-val-cell">${r[1]}</td>
+      <td class="roi-val-cell">${r[2]}</td>
+    </tr>`).join('');
+}
+
+// ── Batch Log ─────────────────────────────────────────────────────────────────
+function generateBatchLog(){
+  const results=['PASS','PASS','PASS','PASS','PASS','PASS','CONDITIONAL','FAIL'];
+  const now=new Date();
+  batchLog=[];
+  for(let i=0;i<28;i++){
+    const r=REACTORS[i%REACTORS.length];
+    const dt=new Date(now.getTime()-i*4.2*3600000);
+    const result=results[Math.floor(Math.random()*results.length)];
+    const yld=result==='PASS'?88+Math.random()*8:result==='CONDITIONAL'?84+Math.random()*4:76+Math.random()*6;
+    const interventions=Math.floor(Math.random()*4);
+    batchLog.push({
+      id:`BCH-${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}-${100+i}`,
+      reactor:r.id,product:r.product.split(' ')[0]+' '+r.product.split(' ')[1],
+      start:fmtDT(dt),duration:`${180+Math.floor(Math.random()*60)} min`,
+      yield:yld.toFixed(1),interventions,
+      operator:OPERATORS[i%OPERATORS.length],result,
+    });
+  }
+  // Populate filter
+  const sel=document.getElementById('logFilterReactor');
+  REACTORS.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.id;sel.appendChild(o);});
+}
+
+function renderLog(data){
+  const rows=data||batchLog;
+  document.getElementById('logBody').innerHTML=rows.map(r=>`
+    <tr>
+      <td>${r.id}</td><td>${r.reactor}</td><td>${r.product}</td>
+      <td>${r.start}</td><td>${r.duration}</td>
+      <td class="${parseFloat(r.yield)>=90?'yield-hi':parseFloat(r.yield)<86?'yield-lo':''}">${r.yield}%</td>
+      <td>${r.interventions} AI actions</td><td>${r.operator}</td>
+      <td><span class="result-pill rp-${r.result==='PASS'?'pass':r.result==='CONDITIONAL'?'cond':'fail'}">${r.result}</span></td>
+    </tr>`).join('');
+}
+
+function filterLog(){
+  const re=document.getElementById('logFilterReactor').value;
+  const rs=document.getElementById('logFilterResult').value;
+  renderLog(batchLog.filter(r=>(!re||r.reactor===re)&&(!rs||r.result===rs)));
+}
+function exportLog(){showToast('⬇ Batch log exported — Pidilite_BatchLog_April2026.xlsx');}
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function chartOpts(){
+  return{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#122018',
+      borderColor:'#14C97A',borderWidth:1,titleColor:'#C0DEC9',bodyColor:'#7DB896'}},
+    scales:{
+      x:{grid:{color:'rgba(20,201,122,.05)'},ticks:{color:'#527A62',
+        font:{family:'JetBrains Mono',size:10}}},
+      y:{grid:{color:'rgba(20,201,122,.05)'},ticks:{color:'#527A62',
+        font:{family:'JetBrains Mono',size:10}}},
+    }};
+}
+
+function seedChartData(){
+  const now=new Date();
+  for(let i=49;i>=0;i--){
+    const t=new Date(now.getTime()-i*90000);
+    chartLabels.push(fmtClock(t));
+    const base=88+i*.12;
+    yieldHistory.push(+(base+(Math.random()-.4)*.3).toFixed(2));
+    const tb=82+(i<20?i*.05:0)+(Math.random()-.5)*.8;
+    tempActual.push(+tb.toFixed(1));
+    tempOptimal.push(+(80+(Math.random()-.5)*.2).toFixed(1));
+  }
+}
+
+function initCharts(){
+  const lineOpts={...chartOpts(),elements:{line:{tension:.4,borderWidth:2},point:{radius:0,hoverRadius:3}}};
+
+  yieldChart=new Chart(document.getElementById('yieldChart'),{
+    type:'line',
+    data:{labels:chartLabels,datasets:[
+      {label:'Predicted Yield',data:yieldHistory,borderColor:'#14C97A',
+        backgroundColor:'rgba(20,201,122,.08)',fill:true},
+      {label:'Threshold',data:Array(50).fill(88),borderColor:'rgba(200,16,46,.4)',
+        borderDash:[5,3],borderWidth:1,pointRadius:0},
+    ]},
+    options:{...lineOpts,plugins:{...lineOpts.plugins,legend:{display:true,
+      labels:{color:'#7DB896',font:{size:10},boxWidth:12}}}},
+  });
+
+  tempChart=new Chart(document.getElementById('tempChart'),{
+    type:'line',
+    data:{labels:chartLabels,datasets:[
+      {label:'Actual',data:tempActual,borderColor:'#F59E0B',backgroundColor:'transparent'},
+      {label:'Optimal',data:tempOptimal,borderColor:'rgba(20,201,122,.5)',
+        borderDash:[4,3],backgroundColor:'transparent'},
+    ]},
+    options:{...lineOpts,plugins:{...lineOpts.plugins,legend:{display:true,
+      labels:{color:'#7DB896',font:{size:10},boxWidth:12}}}},
+  });
+
+  renderYieldBars();
+}
+
+// ── Simulation ────────────────────────────────────────────────────────────────
+function startSim(){
+  setInterval(()=>{
+    tick++; elapsedSec++;
+
+    // Advance phase progress
+    if(REACTORS[0].status==='running'){
+      phaseProgress=Math.min(100,phaseProgress+.008);
+      if(phaseProgress>=100){phaseProgress=0;currentPhase=(currentPhase+1)%BATCH_PHASES.length;}
+    }
+
+    // Slowly tick yield indices
+    REACTORS.forEach((r,i)=>{
+      if(r.status==='running') r.yieldIdx=Math.min(.97,r.yieldIdx+.00003);
+      if(r.status==='alert')   r.yieldIdx=Math.max(.78,r.yieldIdx-.00004);
+      if(r.status==='loading') r.yieldIdx=Math.min(.88,r.yieldIdx+.00008);
+    });
+
+    // Update elapsed
+    if(document.getElementById('elapsedTxt')&&REACTORS[monitorIdx].status==='running'){
+      document.getElementById('elapsedTxt').textContent=`Elapsed: ${fmtTime(elapsedSec)}`;
+      document.getElementById('progFill').style.width=phaseProgress+'%';
+    }
+
+    // Chart update every 6 seconds
+    if(tick%6===0){
+      const now=new Date();
+      const newYield=+(REACTORS[0].yieldIdx*100+(Math.random()-.4)*.2).toFixed(2);
+      const newTemp=+(82+(Math.random()-.3)*.6).toFixed(1);
+      yieldHistory.push(newYield); tempActual.push(newTemp); tempOptimal.push(80);
+      chartLabels.push(fmtClock(now));
+      if(yieldHistory.length>70){yieldHistory.shift();tempActual.shift();tempOptimal.shift();chartLabels.shift();}
+      if(yieldChart){
+        yieldChart.data.labels=chartLabels;
+        yieldChart.data.datasets[0].data=yieldHistory;
+        yieldChart.update('none');
+      }
+      if(tempChart){
+        tempChart.data.labels=chartLabels;
+        tempChart.data.datasets[0].data=tempActual;
+        tempChart.update('none');
+      }
+      // Update yield big number
+      const yBig=document.getElementById('yieldBig');
+      if(yBig) yBig.textContent=(REACTORS[0].yieldIdx*100).toFixed(1);
+    }
+  },1000);
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function openModal(){document.getElementById('pilotModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('pilotModal').classList.remove('open');document.body.style.overflow='';}
+function maybeClose(e){if(e.target===document.getElementById('pilotModal'))closeModal();}
+function submitPilot(e){e.preventDefault();closeModal();showToast('✓ Pilot request submitted. Our team will contact you within 24 hours.');}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),4000);}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function pad(n){return String(n).padStart(2,'0');}
+function fmtTime(s){const h=Math.floor(s/3600);const m=Math.floor((s%3600)/60);const sc=s%60;return `${pad(h)}:${pad(m)}:${pad(sc)}`;}
+function fmtClock(d){return `${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+function fmtDT(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+</script>
+</body>
+</html>
